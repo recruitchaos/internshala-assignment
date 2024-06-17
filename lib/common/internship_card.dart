@@ -27,7 +27,7 @@ class InternshipCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Container(
         decoration: BoxDecoration(
           color: Color(0xffffffff),
@@ -52,7 +52,7 @@ class InternshipCard extends StatelessWidget {
                         children: [
                           Icon(Icons.trending_up, color: Color(0xff008BDC),),
                           SizedBox(width: 8,),
-                          Text("Actively hiring", style: TextStyle(color: Colors.black, fontSize: 14),)
+                          Text("Actively hiring", style: TextStyle(color: Colors.black, fontSize: 13),)
                         ],
                       ),
                     ),
@@ -110,7 +110,7 @@ class InternshipCard extends StatelessWidget {
                   ),
                   Text(
                     location,
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
                   )
                 ],
               ),
@@ -129,7 +129,7 @@ class InternshipCard extends StatelessWidget {
                   ),
                   Text(
                     timeToStart,
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
                   ),
                   SizedBox(
                     width: 24,
@@ -142,7 +142,7 @@ class InternshipCard extends StatelessWidget {
                   SizedBox(
                     width: 6,
                   ),
-                  Text(duration)
+                  Text(duration, style: TextStyle(fontSize: 14, color: Colors.grey.shade800),)
                 ],
               ),
               SizedBox(
@@ -158,7 +158,7 @@ class InternshipCard extends StatelessWidget {
                   SizedBox(
                     width: 6,
                   ),
-                  Text(stipend)
+                  Text(stipend, style: TextStyle(fontSize: 14, color: Colors.grey.shade800),)
                 ],
               ),
               SizedBox(
@@ -169,7 +169,7 @@ class InternshipCard extends StatelessWidget {
                 runSpacing: 4.0, // spacing between rows
                 children: label
                     .map((label) => Tags(
-                          child: Text(label),
+                          child: Text(label, style: TextStyle(fontSize: 14, color: Colors.grey.shade800),),
                         ))
                     .toList(),
               ),
@@ -189,7 +189,7 @@ class InternshipCard extends StatelessWidget {
                   SizedBox(
                     width: 4,
                   ),
-                  Text(datePosted)
+                  Text(datePosted, style: TextStyle(color: Colors.grey.shade800),)
                 ],
               )),
               SizedBox(

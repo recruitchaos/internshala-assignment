@@ -11,7 +11,13 @@ class InternshipPage extends StatefulWidget {
   final List<String>? selectedProfile;
   final List<String>? selectedCity;
   final String? duration;
-  const InternshipPage({super.key, this.selectedProfile, this.selectedCity, this.duration});
+
+  const InternshipPage({
+    super.key,
+    this.selectedProfile,
+    this.selectedCity,
+    this.duration,
+  });
 
   @override
   State<InternshipPage> createState() => _InternshipPageState();
@@ -22,7 +28,6 @@ class _InternshipPageState extends State<InternshipPage> {
   List<String> selectedProfile = [];
   List<String> selectedCity = [];
   String duration = "";
-
   bool isFiltered = false;
 
   @override
@@ -47,7 +52,8 @@ class _InternshipPageState extends State<InternshipPage> {
 
   void _loadNoOfInternshipsWithFilters() async {
     try {
-      List<Map<String, dynamic>> internships = await GetInternshipData().getInternshipDataWithFilters(
+      List<Map<String, dynamic>> internships = await GetInternshipData()
+          .getInternshipDataWithFilters(
         selectedProfile: selectedProfile,
         selectedCity: selectedCity,
         duration: duration,
@@ -65,21 +71,30 @@ class _InternshipPageState extends State<InternshipPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff5f5f5),
-      appBar: CustomAppBar(title: Text("Interships"), leading: Builder(
-      builder: (context) {
-        return IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
+      appBar: CustomAppBar(
+        title: const Text("Internships"),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
           },
-        );
-      },
-    ),),
+        ),
+      ),
       drawer: Drawer(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DrawerHeader(child: Image(image: AssetImage('assets/images/internshala.png'), width: ScreenDimension.getScreenWidth(context) * 0.3, height: ScreenDimension.getScreenWidth(context) * 0.3,)),
+            DrawerHeader(
+              child: Image(
+                image: const AssetImage('assets/images/internshala.png'),
+                width: ScreenDimension.getScreenWidth(context) * 0.3,
+                height: ScreenDimension.getScreenWidth(context) * 0.3,
+              ),
+            ),
           ],
         ),
       ),
@@ -87,12 +102,12 @@ class _InternshipPageState extends State<InternshipPage> {
         child: Column(
           children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
               ),
               child: Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   isFiltered
                       ? Align(
                           alignment: Alignment.topLeft,
@@ -100,161 +115,233 @@ class _InternshipPageState extends State<InternshipPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => FilterPage(selectedProfiles: selectedProfile, selectedCities: selectedCity)));
+                                      onTap: () async {
+                                        final result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => FilterPage(
+                                              selectedProfiles:
+                                                  selectedProfile,
+                                              selectedCities: selectedCity,
+                                              duration: duration,
+                                            ),
+                                          ),
+                                        );
+                                        if (result != null &&
+                                            result is Map<String, dynamic>) {
+                                          setState(() {
+                                            selectedProfile = result[
+                                                'selectedProfiles'];
+                                            selectedCity =
+                                                result['selectedCities'];
+                                            duration = result['duration'];
+                                          });
+                                          _loadNoOfInternshipsWithFilters();
+                                        }
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 1),
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                             width: 2,
-                                            color: Color(0xff008BDC),
+                                            color: const Color(0xff008BDC),
                                           ),
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                         ),
                                         child: Row(
                                           children: [
-                                            Text('Filters'),
-                                            SizedBox(width: 4),
+                                            const Text('Filters'),
+                                            const SizedBox(width: 4),
                                             Container(
-                                              padding: EdgeInsets.all(6),
-                                              decoration: BoxDecoration(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: const BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 color: Color(0xff008BDC),
                                               ),
                                               child: Text(
                                                 (selectedProfile.length +
                                                         selectedCity.length +
-                                                        (duration != "" ? 1 : 0))
+                                                        (duration != ""
+                                                            ? 1
+                                                            : 0))
                                                     .toString(),
-                                                style: TextStyle(color: Colors.white),
+                                                style: const TextStyle(
+                                                    color: Colors.white),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 8),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 40,
-                                    child: ListView(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      children: [
-                                        for (var profile in selectedProfile)
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                                            child: Chip(
-                                              
-                                              label: Text(profile),
-                                              onDeleted: () {
-                                                setState(() {
-                                                  selectedProfile.remove(profile);
-                                                  if (selectedProfile.isEmpty && selectedCity.isEmpty && duration == "") {
-                                                    isFiltered = false;
-                                                    _loadNoOfInternships();
-                                                  } else {
-                                                    _loadNoOfInternshipsWithFilters();
-                                                  }
-                                                });
-                                              },
-                                              deleteIcon: Icon(Icons.close, size: 16, color: Color(0xff008BDC)),
-                                              backgroundColor: Colors.white,
-                                              shape: StadiumBorder(
-                                                side: BorderSide(
-                                                  color: Color(0xff008BDC),
-                                                  width: 2,
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: ListView(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.horizontal,
+                                          children: [
+                                            for (var profile
+                                                in selectedProfile)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 4),
+                                                child: Chip(
+                                                  label: Text(profile),
+                                                  onDeleted: () {
+                                                    setState(() {
+                                                      selectedProfile
+                                                          .remove(profile);
+                                                      if (selectedProfile
+                                                              .isEmpty &&
+                                                          selectedCity
+                                                              .isEmpty &&
+                                                          duration == "") {
+                                                        isFiltered = false;
+                                                        _loadNoOfInternships();
+                                                      } else {
+                                                        _loadNoOfInternshipsWithFilters();
+                                                      }
+                                                    });
+                                                  },
+                                                  deleteIcon: const Icon(
+                                                    Icons.close,
+                                                    size: 16,
+                                                    color: Color(0xff008BDC),
+                                                  ),
+                                                  backgroundColor:
+                                                      Colors.white,
+                                                  shape:
+                                                      const StadiumBorder(
+                                                    side: BorderSide(
+                                                      color: Color(0xff008BDC),
+                                                      width: 2,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        for (var city in selectedCity)
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                                            child: Chip(
-                                              padding: EdgeInsets.only(right: 4),
-                                              label: Text(city),
-                                              onDeleted: () {
-                                                setState(() {
-                                                  selectedCity.remove(city);
-                                                  if (selectedProfile.isEmpty && selectedCity.isEmpty && duration == "") {
-                                                    isFiltered = false;
-                                                    _loadNoOfInternships();
-                                                  } else {
-                                                    _loadNoOfInternshipsWithFilters();
-                                                  }
-                                                });
-                                              },
-                                              deleteIcon: Icon(Icons.close, size: 16, color: Color(0xff008BDC)),
-                                              backgroundColor: Colors.white,
-                                              shape: StadiumBorder(
-                                                side: BorderSide(
-                                                  color: Color(0xff008BDC),
-                                                  width: 2,
+                                            for (var city in selectedCity)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 4),
+                                                child: Chip(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 4),
+                                                  label: Text(city),
+                                                  onDeleted: () {
+                                                    setState(() {
+                                                      selectedCity.remove(city);
+                                                      if (selectedProfile
+                                                              .isEmpty &&
+                                                          selectedCity
+                                                              .isEmpty &&
+                                                          duration == "") {
+                                                        isFiltered = false;
+                                                        _loadNoOfInternships();
+                                                      } else {
+                                                        _loadNoOfInternshipsWithFilters();
+                                                      }
+                                                    });
+                                                  },
+                                                  deleteIcon: const Icon(
+                                                    Icons.close,
+                                                    size: 16,
+                                                    color: Color(0xff008BDC),
+                                                  ),
+                                                  backgroundColor:
+                                                      Colors.white,
+                                                  shape:
+                                                      const StadiumBorder(
+                                                    side: BorderSide(
+                                                      color: Color(0xff008BDC),
+                                                      width: 2,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        if (duration != "")
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                                            child: Chip(
-                                              padding: EdgeInsets.only(right: 4),
-                                              label: Text("Duration <= $duration months"),
-                                              onDeleted: () {
-                                                setState(() {
-                                                  duration = "";
-                                                  if (selectedProfile.isEmpty && selectedCity.isEmpty && duration == "") {
-                                                    isFiltered = false;
-                                                    _loadNoOfInternships();
-                                                  } else {
-                                                    _loadNoOfInternshipsWithFilters();
-                                                  }
-                                                });
-                                              },
-                                              deleteIcon: Icon(Icons.close, size: 16, color: Color(0xff008BDC)),
-                                              backgroundColor: Colors.white,
-                                              shape: StadiumBorder(
-                                                side: BorderSide(
-                                                  color: Colors.grey,
-                                                  width: 2,
+                                            if (duration != "")
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 4),
+                                                child: Chip(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 4),
+                                                  label: Text(
+                                                      "Duration <= $duration months"),
+                                                  onDeleted: () {
+                                                    setState(() {
+                                                      duration = "";
+                                                      if (selectedProfile
+                                                              .isEmpty &&
+                                                          selectedCity
+                                                              .isEmpty &&
+                                                          duration == "") {
+                                                        isFiltered = false;
+                                                        _loadNoOfInternships();
+                                                      } else {
+                                                        _loadNoOfInternshipsWithFilters();
+                                                      }
+                                                    });
+                                                  },
+                                                  deleteIcon: const Icon(
+                                                    Icons.close,
+                                                    size: 16,
+                                                    color: Color(0xff008BDC),
+                                                  ),
+                                                  backgroundColor:
+                                                      Colors.white,
+                                                  shape:
+                                                      const StadiumBorder(
+                                                    side: BorderSide(
+                                                      color: Colors.grey,
+                                                      width: 2,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                      ],
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
                                   ],
                                 ),
                               ),
-                              
                             ],
                           ),
                         )
                       : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomButton(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomButton(
                               onTap: () async {
                                 final result = await Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => FilterPage(
-                                    selectedProfiles: selectedProfile,
-                                    selectedCities: selectedCity,
-                                  )),
+                                  MaterialPageRoute(
+                                    builder: (context) => FilterPage(
+                                      selectedProfiles: selectedProfile,
+                                      selectedCities: selectedCity,
+                                    ),
+                                  ),
                                 );
-                                if (result != null && result is Map<String, dynamic>) {
+                                if (result != null &&
+                                    result is Map<String, dynamic>) {
                                   setState(() {
-                                    selectedProfile = result['selectedProfiles'];
+                                    selectedProfile =
+                                        result['selectedProfiles'];
                                     selectedCity = result['selectedCities'];
                                     duration = result['duration'];
                                   });
@@ -262,17 +349,24 @@ class _InternshipPageState extends State<InternshipPage> {
                                 }
                               },
                             ),
-                        ],
-                      ),
-                  SizedBox(height: 16),
+                          ],
+                        ),
+                  const SizedBox(height: 16),
                   Text("$totalInternships total internships" ?? "Loading.."),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                 ],
               ),
             ),
             FutureBuilder(
-              future: isFiltered ? GetInternshipData().getInternshipDataWithFilters(selectedProfile: selectedProfile, selectedCity: selectedCity, duration: duration) : GetInternshipData().getInternshipData(),
-              builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+              future: isFiltered
+                  ? GetInternshipData().getInternshipDataWithFilters(
+                      selectedProfile: selectedProfile,
+                      selectedCity: selectedCity,
+                      duration: duration,
+                    )
+                  : GetInternshipData().getInternshipData(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                 if (snapshot.hasData) {
                   return Expanded(
                     child: ListView.builder(
@@ -284,14 +378,16 @@ class _InternshipPageState extends State<InternshipPage> {
                         if ("${internship['location_names']}" == "[]") {
                           isRemote = true;
                         } else {
-                          locationName = "${internship['location_names']}";
+                          locationName =
+                              "${internship['location_names']}";
                         }
                         return InternshipCard(
                           jobTitle: "${internship['title']}",
                           companyName: "${internship['company_name']}",
                           location: isRemote
                               ? "Remote"
-                              : locationName.substring(1, locationName.length - 1),
+                              : locationName.substring(
+                                  1, locationName.length - 1),
                           stipend: "${internship['stipend']['salary']}",
                           timeToStart: "${internship['start_date']}",
                           duration: "${internship['duration']}",
@@ -301,10 +397,11 @@ class _InternshipPageState extends State<InternshipPage> {
                       },
                     ),
                   );
-                } else if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 } else {
-                  return Center(child: Text("Failed to get data"));
+                  return const Center(child: Text("Failed to get data"));
                 }
               },
             ),

@@ -3,7 +3,8 @@ import 'package:internshala_assignment/common/custom_app_bar.dart';
 import 'package:internshala_assignment/utils/container_button.dart';
 
 class AddCity extends StatefulWidget {
-  const AddCity({super.key});
+  final List<String>? selectedCities;
+  const AddCity({super.key, this.selectedCities});
 
   @override
   State<AddCity> createState() => _AddCityState();
@@ -34,6 +35,20 @@ class _AddCityState extends State<AddCity> {
               .toLowerCase()
               .contains(_searchQuery.toLowerCase()))
           .toList();
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if(widget.selectedCities != null){
+      for (var element in widget.selectedCities!) {
+        for (var category in CityChoices.values) {
+          if(category.value == element){
+            _selectedCategories[category] = true;
+          }
+        }
+      }
     }
   }
 
@@ -120,6 +135,7 @@ class _AddCityState extends State<AddCity> {
                         ),
                         onDeleted: () {
                           setState(() {
+                            widget.selectedCities!.remove(category.value);
                             _selectedCategories[category] = false;
                           });
                         },
@@ -133,18 +149,26 @@ class _AddCityState extends State<AddCity> {
               child: ListView(
                 children:
                   filteredCategories.map((category) {
-                  return Row(
-                    children: [
-                      Checkbox(
-                        value: _selectedCategories[category],
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _selectedCategories[category] = value!;
-                          });
-                        },
-                      ),
-                      Text(category.value),
-                    ],
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedCategories[category] = !_selectedCategories[category]!;
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          activeColor: Color(0xff008BDC),
+                          value: _selectedCategories[category],
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _selectedCategories[category] = value!;
+                            });
+                          },
+                        ),
+                        Text(category.value),
+                      ],
+                    ),
                   );
                 }).toList(),
               ),

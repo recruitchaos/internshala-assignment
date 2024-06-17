@@ -9,7 +9,9 @@ import '../constants/sceeen_dimensions.dart';
 class FilterPage extends StatefulWidget {
   final List<String>? selectedProfiles;
   final List<String>? selectedCities;
-  const FilterPage({super.key, this.selectedProfiles, this.selectedCities});
+  final String? duration;
+  const FilterPage(
+      {super.key, this.selectedProfiles, this.selectedCities, this.duration});
 
   @override
   State<FilterPage> createState() => _FilterPageState();
@@ -22,7 +24,14 @@ class _FilterPageState extends State<FilterPage> {
   List<String> selectedCities = [];
 
   List<String> dropdownMenuEntries = [
-    "1", "2", "3", "4", "6", "12", "24", "36"
+    "1",
+    "2",
+    "3",
+    "4",
+    "6",
+    "12",
+    "24",
+    "36"
   ];
   String? selectedValue;
 
@@ -70,7 +79,8 @@ class _FilterPageState extends State<FilterPage> {
                         elevation: 0,
                         backgroundColor: Color(0xff008BDC),
                         label: Text(profile),
-                        labelStyle: TextStyle(color: Colors.white, fontSize: 14),
+                        labelStyle:
+                            TextStyle(color: Colors.white, fontSize: 14),
                         deleteIcon: Icon(Icons.close, color: Colors.white),
                         onDeleted: () {
                           setState(() {
@@ -88,11 +98,15 @@ class _FilterPageState extends State<FilterPage> {
               onTap: () async {
                 final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddProfile()),
+                  MaterialPageRoute(builder: (context) => AddProfile(selectedProfiles: selectedProfiles),),
                 );
                 if (result != null && result is List<String>) {
                   setState(() {
-                    selectedProfiles = result;
+                    Set<String> uniqueProfiles = Set<String>.from(selectedProfiles);
+                    // Add all new cities to the set
+                    uniqueProfiles.addAll(result);
+                    // Convert the set back to a list
+                    selectedProfiles = uniqueProfiles.toList();
                   });
                 }
               },
@@ -135,7 +149,8 @@ class _FilterPageState extends State<FilterPage> {
                         elevation: 0,
                         backgroundColor: Color(0xff008BDC),
                         label: Text(city),
-                        labelStyle: TextStyle(color: Colors.white, fontSize: 14),
+                        labelStyle:
+                            TextStyle(color: Colors.white, fontSize: 14),
                         deleteIcon: Icon(Icons.close, color: Colors.white),
                         onDeleted: () {
                           setState(() {
@@ -153,11 +168,15 @@ class _FilterPageState extends State<FilterPage> {
               onTap: () async {
                 final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddCity()),
+                  MaterialPageRoute(builder: (context) => AddCity(selectedCities: selectedCities,)),
                 );
                 if (result != null && result is List<String>) {
                   setState(() {
-                    selectedCities = result;
+                    Set<String> uniqueCities = Set<String>.from(selectedCities);
+                    // Add all new cities to the set
+                    uniqueCities.addAll(result);
+                    // Convert the set back to a list
+                    selectedCities = uniqueCities.toList();
                   });
                 }
               },
@@ -206,12 +225,14 @@ class _FilterPageState extends State<FilterPage> {
                     selectedNumber = number;
                   });
                 },
-                dropdownMenuEntries: NumberLabel.values.map<DropdownMenuEntry<NumberLabel>>((NumberLabel number) {
+                dropdownMenuEntries: NumberLabel.values
+                    .map<DropdownMenuEntry<NumberLabel>>((NumberLabel number) {
                   return DropdownMenuEntry<NumberLabel>(
                     value: number,
                     label: number.label,
                     style: ButtonStyle(
-                      textStyle: WidgetStateProperty.all(TextStyle(color: Colors.grey)),
+                      textStyle: WidgetStateProperty.all(
+                          TextStyle(color: Colors.grey)),
                     ),
                   );
                 }).toList(),
@@ -239,10 +260,14 @@ class _FilterPageState extends State<FilterPage> {
                 ),
                 ContainerButton(
                   onPressed: () {
-                    if(selectedProfiles.isEmpty && selectedCities.isEmpty && selectedNumber == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("No filters selected")));
+                    if (selectedProfiles.isEmpty &&
+                        selectedCities.isEmpty &&
+                        selectedNumber == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("No filters selected")));
                       return;
                     }
+                    print(selectedCities);
                     Navigator.pop(context, {
                       'selectedProfiles': selectedProfiles,
                       'selectedCities': selectedCities,
@@ -250,7 +275,11 @@ class _FilterPageState extends State<FilterPage> {
                     });
                   },
                   text: "Apply",
-                  backgroundColor: (selectedProfiles.isEmpty && selectedCities.isEmpty && selectedNumber == null) ? Colors.grey :  Color(0xff008BDC),
+                  backgroundColor: (selectedProfiles.isEmpty &&
+                          selectedCities.isEmpty &&
+                          selectedNumber == null)
+                      ? Colors.grey
+                      : Color(0xff008BDC),
                   textStyle: TextStyle(color: Colors.white, fontSize: 16),
                   padding: EdgeInsets.symmetric(
                     horizontal: ScreenDimension.getScreenWidth(context) * 0.14,

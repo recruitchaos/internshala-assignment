@@ -4,7 +4,8 @@ import 'package:internshala_assignment/common/profile_options.dart';
 import 'package:internshala_assignment/utils/container_button.dart';
 
 class AddProfile extends StatefulWidget {
-  const AddProfile({super.key});
+  final List<String>? selectedProfiles;
+  const AddProfile({super.key, this.selectedProfiles});
 
   @override
   State<AddProfile> createState() => _AddProfileState();
@@ -16,6 +17,7 @@ class _AddProfileState extends State<AddProfile> {
   };
 
   String _searchQuery = "";
+
 
   List<ProfileChoices> get selectedCategories {
     return _selectedCategories.entries
@@ -33,6 +35,21 @@ class _AddProfileState extends State<AddProfile> {
               category.value.toLowerCase().contains(_searchQuery.toLowerCase()))
           .toList();
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if(widget.selectedProfiles != null){
+      for (var element in widget.selectedProfiles!) {
+        for (var category in ProfileChoices.values) {
+          if(category.value == element){
+            _selectedCategories[category] = true;
+          }
+        }
+      }
+    }
+    super.initState();
   }
 
   @override
@@ -61,7 +78,8 @@ class _AddProfileState extends State<AddProfile> {
                 )),
             ContainerButton(
               onPressed: () {
-                List<String> selectedProfiles = selectedCategories.map((e) => e.value).toList();
+                List<String> selectedProfiles =
+                    selectedCategories.map((e) => e.value).toList();
                 Navigator.pop(context, selectedProfiles);
               },
               text: "Apply",
@@ -119,6 +137,7 @@ class _AddProfileState extends State<AddProfile> {
                         ),
                         onDeleted: () {
                           setState(() {
+                            widget.selectedProfiles!.remove(category.value);
                             _selectedCategories[category] = false;
                           });
                         },
@@ -131,18 +150,29 @@ class _AddProfileState extends State<AddProfile> {
             Expanded(
               child: ListView(
                 children: filteredCategories.map((category) {
-                  return Row(
-                    children: [
-                      Checkbox(
-                        value: _selectedCategories[category],
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _selectedCategories[category] = value!;
-                          });
-                        },
-                      ),
-                      Text(category.value),
-                    ],
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedCategories[category] =
+                            !_selectedCategories[category]!;
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          activeColor: Color(0xff008BDC),
+                          
+                          value: _selectedCategories[category],
+                          onChanged: (bool? value) {
+                            setState(() {
+                              widget.selectedProfiles!.remove(category.value);
+                              _selectedCategories[category] = value!;
+                            });
+                          },
+                        ),
+                        Text(category.value),
+                      ],
+                    ),
                   );
                 }).toList(),
               ),

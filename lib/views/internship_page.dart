@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:internshala_assignment/common/custom_app_bar.dart';
 import 'package:internshala_assignment/common/internship_card.dart';
+import 'package:internshala_assignment/constants/sceeen_dimensions.dart';
 import 'package:internshala_assignment/services/internship_api.dart';
 import 'package:internshala_assignment/utils/custom_button.dart';
 import 'package:internshala_assignment/views/filter_page.dart';
@@ -64,12 +65,22 @@ class _InternshipPageState extends State<InternshipPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff5f5f5),
-      appBar: CustomAppBar(
-        title: Text("Internships"),
-        leading: Icon(Icons.menu),
-        actions: Padding(
-          padding: EdgeInsets.only(right: 16.0),
-          child: Icon(EvaIcons.search),
+      appBar: CustomAppBar(title: Text("Interships"), leading: Builder(
+      builder: (context) {
+        return IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+        );
+      },
+    ),),
+      drawer: Drawer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DrawerHeader(child: Image(image: AssetImage('assets/images/internshala.png'), width: ScreenDimension.getScreenWidth(context) * 0.3, height: ScreenDimension.getScreenWidth(context) * 0.3,)),
+          ],
         ),
       ),
       body: Center(

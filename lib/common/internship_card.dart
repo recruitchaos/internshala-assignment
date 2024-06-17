@@ -37,6 +37,29 @@ class InternshipCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 8,),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: Colors.grey.shade400),
+                        borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      child: Row(
+                        children: [
+                          Icon(Icons.trending_up, color: Color(0xff008BDC),),
+                          SizedBox(width: 8,),
+                          Text("Actively hiring", style: TextStyle(color: Colors.black, fontSize: 14),)
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +90,9 @@ class InternshipCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  CircleAvatar()
+                  CircleAvatar(
+                    backgroundImage: AssetImage("assets/images/dummy_logo.png"),
+                  )
                 ],
               ),
               SizedBox(

@@ -239,6 +239,10 @@ class _FilterPageState extends State<FilterPage> {
                 ),
                 ContainerButton(
                   onPressed: () {
+                    if(selectedProfiles.isEmpty && selectedCities.isEmpty && selectedNumber == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("No filters selected")));
+                      return;
+                    }
                     Navigator.pop(context, {
                       'selectedProfiles': selectedProfiles,
                       'selectedCities': selectedCities,
@@ -246,7 +250,7 @@ class _FilterPageState extends State<FilterPage> {
                     });
                   },
                   text: "Apply",
-                  backgroundColor: Color(0xff008BDC),
+                  backgroundColor: (selectedProfiles.isEmpty && selectedCities.isEmpty && selectedNumber == null) ? Colors.grey :  Color(0xff008BDC),
                   textStyle: TextStyle(color: Colors.white, fontSize: 16),
                   padding: EdgeInsets.symmetric(
                     horizontal: ScreenDimension.getScreenWidth(context) * 0.14,

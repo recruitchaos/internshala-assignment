@@ -82,30 +82,177 @@ class _InternshipPageState extends State<InternshipPage> {
               child: Column(
                 children: [
                   SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomButton(
-                        onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => FilterPage(
-                              selectedProfiles: selectedProfile,
-                              selectedCities: selectedCity,
-                            )),
-                          );
-                          if (result != null && result is Map<String, dynamic>) {
-                            setState(() {
-                              selectedProfile = result['selectedProfiles'];
-                              selectedCity = result['selectedCities'];
-                              duration = result['duration'];
-                            });
-                            _loadNoOfInternshipsWithFilters();
-                          }
-                        },
+                  isFiltered
+                      ? Align(
+                          alignment: Alignment.topLeft,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => FilterPage(selectedProfiles: selectedProfile, selectedCities: selectedCity)));
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 2,
+                                            color: Color(0xff008BDC),
+                                          ),
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Text('Filters'),
+                                            SizedBox(width: 4),
+                                            Container(
+                                              padding: EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Color(0xff008BDC),
+                                              ),
+                                              child: Text(
+                                                (selectedProfile.length +
+                                                        selectedCity.length +
+                                                        (duration != "" ? 1 : 0))
+                                                    .toString(),
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 40,
+                                    child: ListView(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      children: [
+                                        for (var profile in selectedProfile)
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                                            child: Chip(
+                                              
+                                              label: Text(profile),
+                                              onDeleted: () {
+                                                setState(() {
+                                                  selectedProfile.remove(profile);
+                                                  if (selectedProfile.isEmpty && selectedCity.isEmpty && duration == "") {
+                                                    isFiltered = false;
+                                                    _loadNoOfInternships();
+                                                  } else {
+                                                    _loadNoOfInternshipsWithFilters();
+                                                  }
+                                                });
+                                              },
+                                              deleteIcon: Icon(Icons.close, size: 16, color: Color(0xff008BDC)),
+                                              backgroundColor: Colors.white,
+                                              shape: StadiumBorder(
+                                                side: BorderSide(
+                                                  color: Color(0xff008BDC),
+                                                  width: 2,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        for (var city in selectedCity)
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                                            child: Chip(
+                                              padding: EdgeInsets.only(right: 4),
+                                              label: Text(city),
+                                              onDeleted: () {
+                                                setState(() {
+                                                  selectedCity.remove(city);
+                                                  if (selectedProfile.isEmpty && selectedCity.isEmpty && duration == "") {
+                                                    isFiltered = false;
+                                                    _loadNoOfInternships();
+                                                  } else {
+                                                    _loadNoOfInternshipsWithFilters();
+                                                  }
+                                                });
+                                              },
+                                              deleteIcon: Icon(Icons.close, size: 16, color: Color(0xff008BDC)),
+                                              backgroundColor: Colors.white,
+                                              shape: StadiumBorder(
+                                                side: BorderSide(
+                                                  color: Color(0xff008BDC),
+                                                  width: 2,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        if (duration != "")
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                                            child: Chip(
+                                              padding: EdgeInsets.only(right: 4),
+                                              label: Text("Duration <= $duration months"),
+                                              onDeleted: () {
+                                                setState(() {
+                                                  duration = "";
+                                                  if (selectedProfile.isEmpty && selectedCity.isEmpty && duration == "") {
+                                                    isFiltered = false;
+                                                    _loadNoOfInternships();
+                                                  } else {
+                                                    _loadNoOfInternshipsWithFilters();
+                                                  }
+                                                });
+                                              },
+                                              deleteIcon: Icon(Icons.close, size: 16, color: Color(0xff008BDC)),
+                                              backgroundColor: Colors.white,
+                                              shape: StadiumBorder(
+                                                side: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 2,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                  ],
+                                ),
+                              ),
+                              
+                            ],
+                          ),
+                        )
+                      : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomButton(
+                              onTap: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => FilterPage(
+                                    selectedProfiles: selectedProfile,
+                                    selectedCities: selectedCity,
+                                  )),
+                                );
+                                if (result != null && result is Map<String, dynamic>) {
+                                  setState(() {
+                                    selectedProfile = result['selectedProfiles'];
+                                    selectedCity = result['selectedCities'];
+                                    duration = result['duration'];
+                                  });
+                                  _loadNoOfInternshipsWithFilters();
+                                }
+                              },
+                            ),
+                        ],
                       ),
-                    ],
-                  ),
                   SizedBox(height: 16),
                   Text("$totalInternships total internships" ?? "Loading.."),
                   SizedBox(height: 12),
